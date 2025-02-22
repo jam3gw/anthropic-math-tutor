@@ -1,0 +1,807 @@
+{
+ "Resources": {
+  "AnthropicApiParameter6DC2647E": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Description": "API Key for Anthropic Claude API",
+    "Name": "/calculator/anthropic-api-key",
+    "Tier": "Standard",
+    "Type": "String",
+    "Value": "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"
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/AnthropicApiParameter/Resource"
+   }
+  },
+  "CalculatorFunctionServiceRole6C76D82E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorFunction/ServiceRole/Resource"
+   }
+  },
+  "CalculatorFunctionServiceRoleDefaultPolicyBD5CD859": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "ssm:GetParameter",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ssm:",
+          {
+           "Ref": "AWS::Region"
+          },
+          ":",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":parameter",
+          {
+           "Ref": "AnthropicApiParameter6DC2647E"
+          }
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CalculatorFunctionServiceRoleDefaultPolicyBD5CD859",
+    "Roles": [
+     {
+      "Ref": "CalculatorFunctionServiceRole6C76D82E"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CalculatorFunction04B45F12": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "704af24969d1de0e129d56c9af38b6e2bdadaa3c709f754bad9c5dedbb9f8570.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "PARAMETER_NAME": {
+       "Ref": "AnthropicApiParameter6DC2647E"
+      }
+     }
+    },
+    "Handler": "lambda_function.lambda_handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "CalculatorFunctionServiceRole6C76D82E",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.9",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "CalculatorFunctionServiceRoleDefaultPolicyBD5CD859",
+    "CalculatorFunctionServiceRole6C76D82E"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorFunction/Resource",
+    "aws:asset:path": "asset.704af24969d1de0e129d56c9af38b6e2bdadaa3c709f754bad9c5dedbb9f8570",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CalculatorApiDD909B8B": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Name": "Calculator Service"
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/Resource"
+   }
+  },
+  "CalculatorApiCloudWatchRole71064C1E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/CloudWatchRole/Resource"
+   }
+  },
+  "CalculatorApiAccount05DAB6B8": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "CalculatorApiCloudWatchRole71064C1E",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "CalculatorApiDD909B8B"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/Account"
+   }
+  },
+  "CalculatorApiDeploymentEF1A15303f4ac9733879d844101051d48acb9d5c": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Automatically created by the RestApi construct",
+    "RestApiId": {
+     "Ref": "CalculatorApiDD909B8B"
+    }
+   },
+   "DependsOn": [
+    "CalculatorApicalculateOPTIONSB4F1EC8D",
+    "CalculatorApicalculatePOSTD3A1D9BF",
+    "CalculatorApicalculateBBFC9F30",
+    "CalculatorApiOPTIONS0DDF8604"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/Deployment/Resource"
+   }
+  },
+  "CalculatorApiDeploymentStageprodD98406F9": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "CalculatorApiDeploymentEF1A15303f4ac9733879d844101051d48acb9d5c"
+    },
+    "RestApiId": {
+     "Ref": "CalculatorApiDD909B8B"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "CalculatorApiAccount05DAB6B8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "CalculatorApiOPTIONS0DDF8604": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "CalculatorApiDD909B8B",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "CalculatorApiDD909B8B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/Default/OPTIONS/Resource"
+   }
+  },
+  "CalculatorApicalculateBBFC9F30": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "CalculatorApiDD909B8B",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "calculate",
+    "RestApiId": {
+     "Ref": "CalculatorApiDD909B8B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/Default/calculate/Resource"
+   }
+  },
+  "CalculatorApicalculateOPTIONSB4F1EC8D": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "CalculatorApicalculateBBFC9F30"
+    },
+    "RestApiId": {
+     "Ref": "CalculatorApiDD909B8B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/Default/calculate/OPTIONS/Resource"
+   }
+  },
+  "CalculatorApicalculatePOSTApiPermissionCalculatorStackCalculatorApi2F62B942POSTcalculate70F0109A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CalculatorFunction04B45F12",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "CalculatorApiDD909B8B"
+       },
+       "/",
+       {
+        "Ref": "CalculatorApiDeploymentStageprodD98406F9"
+       },
+       "/POST/calculate"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/Default/calculate/POST/ApiPermission.CalculatorStackCalculatorApi2F62B942.POST..calculate"
+   }
+  },
+  "CalculatorApicalculatePOSTApiPermissionTestCalculatorStackCalculatorApi2F62B942POSTcalculate0E7B8B8A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CalculatorFunction04B45F12",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "CalculatorApiDD909B8B"
+       },
+       "/test-invoke-stage/POST/calculate"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/Default/calculate/POST/ApiPermission.Test.CalculatorStackCalculatorApi2F62B942.POST..calculate"
+   }
+  },
+  "CalculatorApicalculatePOSTD3A1D9BF": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "CalculatorFunction04B45F12",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "CalculatorApicalculateBBFC9F30"
+    },
+    "RestApiId": {
+     "Ref": "CalculatorApiDD909B8B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CalculatorApi/Default/calculate/POST/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/01QzW7CMAx+Fu5pKHDhOGDiNg2VB0AmNcXQJFXtDFVV3n1KKGOn78eO7S9LvViXeixn8ODC1PeipbMejwLmruDBp5HZJt2Taw7Qg0XBXu0u7k9ERWD1WPkWk5/x4FsyQ27LLCpenYAZhfUmgeKV3gZzR9kCo2rBnmvQ4+7i9sEZIe/yY+wtMZN3UUFHDQg+YNBjhSybjvK6N90Y44MT9Yld6weLTpL7Tx0Fmnzjk1TIPvQG8wVfKFdfp+LEXtVpSeYxvu0cIw0i16Se7yBdkKjKAtruCrqcfUxfOk/4TFh0g1y9m1oOWbwCR+V8jfrG859lqRdrvZrdmKjogxOyqKsn/gKRos8bsQEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "CalculatorStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "CalculatorApiEndpoint0B859CBB": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "CalculatorApiDD909B8B"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "CalculatorApiDeploymentStageprodD98406F9"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-3"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-4"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "us-west-2"
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

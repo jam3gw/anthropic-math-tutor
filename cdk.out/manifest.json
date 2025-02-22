@@ -1,0 +1,167 @@
+{
+  "version": "39.0.0",
+  "artifacts": {
+    "CalculatorStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "CalculatorStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "CalculatorStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "CalculatorStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/5687f8359cab9d1e02c8e5c4c12d9f513fd6e8451088314622c4bd2af60b48d7.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "CalculatorStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "CalculatorStack.assets"
+      ],
+      "metadata": {
+        "/CalculatorStack/AnthropicApiParameter/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AnthropicApiParameter6DC2647E"
+          }
+        ],
+        "/CalculatorStack/CalculatorFunction/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorFunctionServiceRole6C76D82E"
+          }
+        ],
+        "/CalculatorStack/CalculatorFunction/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorFunctionServiceRoleDefaultPolicyBD5CD859"
+          }
+        ],
+        "/CalculatorStack/CalculatorFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorFunction04B45F12"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApiDD909B8B"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/CloudWatchRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApiCloudWatchRole71064C1E"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/Account": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApiAccount05DAB6B8"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApiDeploymentEF1A15303f4ac9733879d844101051d48acb9d5c"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/DeploymentStage.prod/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApiDeploymentStageprodD98406F9"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApiEndpoint0B859CBB"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/Default/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApiOPTIONS0DDF8604"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/Default/calculate/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApicalculateBBFC9F30"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/Default/calculate/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApicalculateOPTIONSB4F1EC8D"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/Default/calculate/POST/ApiPermission.CalculatorStackCalculatorApi2F62B942.POST..calculate": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApicalculatePOSTApiPermissionCalculatorStackCalculatorApi2F62B942POSTcalculate70F0109A"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/Default/calculate/POST/ApiPermission.Test.CalculatorStackCalculatorApi2F62B942.POST..calculate": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApicalculatePOSTApiPermissionTestCalculatorStackCalculatorApi2F62B942POSTcalculate0E7B8B8A"
+          }
+        ],
+        "/CalculatorStack/CalculatorApi/Default/calculate/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CalculatorApicalculatePOSTD3A1D9BF"
+          }
+        ],
+        "/CalculatorStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/CalculatorStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/CalculatorStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/CalculatorStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "CalculatorStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

@@ -169,3 +169,28 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Node
+node_modules/
+dist/
+*.js
+*.d.ts
+
+# Python
+__pycache__/
+*.py[cod]
+.env
+.venv/
+venv/
+
+# AWS CDK
+cdk.context.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store

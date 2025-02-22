@@ -1,0 +1,32 @@
+{
+  "version": "39.0.0",
+  "files": {
+    "704af24969d1de0e129d56c9af38b6e2bdadaa3c709f754bad9c5dedbb9f8570": {
+      "source": {
+        "path": "asset.704af24969d1de0e129d56c9af38b6e2bdadaa3c709f754bad9c5dedbb9f8570",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "704af24969d1de0e129d56c9af38b6e2bdadaa3c709f754bad9c5dedbb9f8570.zip",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "5687f8359cab9d1e02c8e5c4c12d9f513fd6e8451088314622c4bd2af60b48d7": {
+      "source": {
+        "path": "CalculatorStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "5687f8359cab9d1e02c8e5c4c12d9f513fd6e8451088314622c4bd2af60b48d7.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
