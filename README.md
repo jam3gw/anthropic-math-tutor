@@ -4,6 +4,8 @@ A cloud-based intelligent math tutor application with Google authentication and 
 
 ## Overview
 
+_Deployment of a domain name is still ongoing_
+
 Jake's Calculator Buddy is a serverless web application that helps users solve and understand mathematical expressions. The application leverages Claude AI to provide step-by-step explanations of mathematical concepts and calculations.
 
 ## Features
