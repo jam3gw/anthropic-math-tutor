@@ -173,8 +173,10 @@ cython_debug/
 # Node
 node_modules/
 dist/
-*.js
-*.d.ts
+
+# CDK compiled JavaScript files (but not source files)
+cdk/**/*.js
+cdk/**/*.d.ts
 
 # Python
 __pycache__/
