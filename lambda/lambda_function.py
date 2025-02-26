@@ -18,11 +18,17 @@ def lambda_handler(event, context):
         )
         
         api_key = response['Parameter']['Value']
-        print("Successfully retrieved API key from Parameter Store")
+        
+        # Log key details safely for debugging
+        key_length = len(api_key) if api_key else 0
+        key_prefix = api_key[:4] if key_length >= 4 else api_key
+        key_suffix = api_key[-4:] if key_length >= 8 else ""
+        print(f"API Key retrieved - Length: {key_length}, Prefix: {key_prefix}, Suffix: {key_suffix}")
+        print(f"API Key format check - Starts with 'sk-ant-': {api_key.startswith('sk-ant-') if api_key else False}")
         
         # Initialize Anthropic client
         client = Anthropic(api_key=api_key)
-        print(f"Successfully initialized Anthropic client")
+        print("Successfully initialized Anthropic client")
 
         # Parse the incoming event
         try:
@@ -31,17 +37,15 @@ def lambda_handler(event, context):
             numbers = body.get('numbers', [])
             
             if not operation or not numbers:
-                return {
-                    'statusCode': 400,
-                    'body': json.dumps({
-                        'error': 'Missing required parameters. Please provide operation and numbers.'
-                    })
-                }
+                return build_response(400, {
+                    'error': 'Missing required parameters. Please provide operation and numbers.'
+                })
 
             # Create the message for Claude
             prompt = f"Please explain this calculation: {' '.join(map(str, numbers))} {operation}"
             
             # Get response from Claude
+            print(f"Sending request to Anthropic API with key prefix: {key_prefix}...")
             message = client.messages.create(
                 model="claude-3-opus-20240229",
                 max_tokens=300,
@@ -50,32 +54,70 @@ def lambda_handler(event, context):
                     "content": prompt
                 }]
             )
+
+            # Properly extract the content from the response
+            # Handle the TextBlock structure in the Anthropic API response
+            print(f"Response received from Anthropic API. Type: {type(message.content)}")
             
-            return {
-                'statusCode': 200,
-                'headers': {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                },
-                'body': json.dumps({
-                    'explanation': str(message.content),
-                    'success': True
-                })
-            }
+            # Extract text based on the response structure
+            explanation = ""
+            if hasattr(message, 'content'):
+                content = message.content
+                if isinstance(content, list):
+                    # If content is a list of blocks
+                    print(f"Content is a list with {len(content)} items")
+                    text_parts = []
+                    for item in content:
+                        print(f"Item type: {type(item)}")
+                        if hasattr(item, 'text'):
+                            text_parts.append(item.text)
+                        elif hasattr(item, 'value'):
+                            text_parts.append(item.value)
+                        elif isinstance(item, str):
+                            text_parts.append(item)
+                        else:
+                            print(f"Unknown item format: {item}")
+                    explanation = " ".join(text_parts)
+                elif isinstance(content, str):
+                    # If content is already a string
+                    explanation = content
+                elif hasattr(content, 'text'):
+                    # If content is a single TextBlock
+                    explanation = content.text
+                elif hasattr(content, 'value'):
+                    explanation = content.value
+                else:
+                    # Fallback: convert to string representation
+                    explanation = str(content)
+            else:
+                explanation = str(message)
+            
+            print(f"Extracted explanation: {explanation[:100]}...")  # Log first 100 chars
+
+            return build_response(200, {
+                'explanation': explanation,
+                'success': True
+            })
             
         except json.JSONDecodeError:
-            return {
-                'statusCode': 400,
-                'body': json.dumps({
-                    'error': 'Invalid JSON in request body'
-                })
-            }
+            return build_response(400, {'error': 'Invalid JSON in request body'})
         
     except Exception as e:
         print(f"Error: {str(e)}")
-        return {
-            'statusCode': 500,
-            'body': json.dumps({
-                'error': f'Internal server error: {str(e)}'
-            })
-        } 
+        print(f"Error type: {type(e)}")
+        import traceback
+        traceback.print_exc()
+        return build_response(500, {'error': f'Internal server error: {str(e)}'})
+
+def build_response(status_code, body):
+    """Helper function to build CORS-compliant responses."""
+    return {
+        'statusCode': status_code,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST',
+            'Access-Control-Allow-Headers': 'Content-Type,Authorization'
+        },
+        'body': json.dumps(body)
+    }

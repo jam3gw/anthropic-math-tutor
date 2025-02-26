@@ -5,9 +5,10 @@
     "calculator": "cdk/app.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cd ui && npm run build && cd ..",
     "watch": "tsc -w",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "deploy": "npm run build && npx cdk deploy --all"
   },
   "devDependencies": {
     "@types/dotenv": "^6.1.1",
@@ -21,6 +22,10 @@
     "aws-cdk-lib": "^2.0.0",
     "constructs": "^10.0.0",
     "dotenv": "^16.4.7",
+    "aws-cdk-lib/aws-s3": "^2.0.0",
+    "aws-cdk-lib/aws-s3-deployment": "^2.0.0",
+    "aws-cdk-lib/aws-cloudfront": "^2.0.0",
+    "aws-cdk-lib/aws-cloudfront-origins": "^2.0.0",
     "source-map-support": "^0.5.21"
   }
 }

@@ -7,7 +7,7 @@
     "Name": "/calculator/anthropic-api-key",
     "Tier": "Standard",
     "Type": "String",
-    "Value": "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"
+    "Value": "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"
    },
    "Metadata": {
     "aws:cdk:path": "CalculatorStack/AnthropicApiParameter/Resource"
@@ -100,7 +100,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "704af24969d1de0e129d56c9af38b6e2bdadaa3c709f754bad9c5dedbb9f8570.zip"
+     "S3Key": "c0b5b1e67118e36b42595250ed2c52616648ed32fe53be67e80ddb0f16be5172.zip"
     },
     "Environment": {
      "Variables": {
@@ -126,8 +126,8 @@
    ],
    "Metadata": {
     "aws:cdk:path": "CalculatorStack/CalculatorFunction/Resource",
-    "aws:asset:path": "asset.704af24969d1de0e129d56c9af38b6e2bdadaa3c709f754bad9c5dedbb9f8570",
-    "aws:asset:is-bundled": false,
+    "aws:asset:path": "asset.c0b5b1e67118e36b42595250ed2c52616648ed32fe53be67e80ddb0f16be5172",
+    "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
   },
@@ -195,7 +195,7 @@
     "aws:cdk:path": "CalculatorStack/CalculatorApi/Account"
    }
   },
-  "CalculatorApiDeploymentEF1A15303f4ac9733879d844101051d48acb9d5c": {
+  "CalculatorApiDeploymentEF1A15301bc544cde887ba5f1aa9f9be2de01c4d": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
     "Description": "Automatically created by the RestApi construct",
@@ -206,8 +206,7 @@
    "DependsOn": [
     "CalculatorApicalculateOPTIONSB4F1EC8D",
     "CalculatorApicalculatePOSTD3A1D9BF",
-    "CalculatorApicalculateBBFC9F30",
-    "CalculatorApiOPTIONS0DDF8604"
+    "CalculatorApicalculateBBFC9F30"
    ],
    "Metadata": {
     "aws:cdk:path": "CalculatorStack/CalculatorApi/Deployment/Resource"
@@ -217,7 +216,7 @@
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
-     "Ref": "CalculatorApiDeploymentEF1A15303f4ac9733879d844101051d48acb9d5c"
+     "Ref": "CalculatorApiDeploymentEF1A15301bc544cde887ba5f1aa9f9be2de01c4d"
     },
     "RestApiId": {
      "Ref": "CalculatorApiDD909B8B"
@@ -229,52 +228,6 @@
    ],
    "Metadata": {
     "aws:cdk:path": "CalculatorStack/CalculatorApi/DeploymentStage.prod/Resource"
-   }
-  },
-  "CalculatorApiOPTIONS0DDF8604": {
-   "Type": "AWS::ApiGateway::Method",
-   "Properties": {
-    "ApiKeyRequired": false,
-    "AuthorizationType": "NONE",
-    "HttpMethod": "OPTIONS",
-    "Integration": {
-     "IntegrationResponses": [
-      {
-       "ResponseParameters": {
-        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-        "method.response.header.Access-Control-Allow-Origin": "'*'",
-        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
-       },
-       "StatusCode": "204"
-      }
-     ],
-     "RequestTemplates": {
-      "application/json": "{ statusCode: 200 }"
-     },
-     "Type": "MOCK"
-    },
-    "MethodResponses": [
-     {
-      "ResponseParameters": {
-       "method.response.header.Access-Control-Allow-Headers": true,
-       "method.response.header.Access-Control-Allow-Origin": true,
-       "method.response.header.Access-Control-Allow-Methods": true
-      },
-      "StatusCode": "204"
-     }
-    ],
-    "ResourceId": {
-     "Fn::GetAtt": [
-      "CalculatorApiDD909B8B",
-      "RootResourceId"
-     ]
-    },
-    "RestApiId": {
-     "Ref": "CalculatorApiDD909B8B"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "CalculatorStack/CalculatorApi/Default/OPTIONS/Resource"
    }
   },
   "CalculatorApicalculateBBFC9F30": {
@@ -298,33 +251,33 @@
   "CalculatorApicalculateOPTIONSB4F1EC8D": {
    "Type": "AWS::ApiGateway::Method",
    "Properties": {
-    "ApiKeyRequired": false,
     "AuthorizationType": "NONE",
     "HttpMethod": "OPTIONS",
     "Integration": {
      "IntegrationResponses": [
       {
        "ResponseParameters": {
-        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
         "method.response.header.Access-Control-Allow-Origin": "'*'",
-        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'"
        },
-       "StatusCode": "204"
+       "StatusCode": "200"
       }
      ],
+     "PassthroughBehavior": "WHEN_NO_MATCH",
      "RequestTemplates": {
-      "application/json": "{ statusCode: 200 }"
+      "application/json": "{\"statusCode\": 200}"
      },
      "Type": "MOCK"
     },
     "MethodResponses": [
      {
       "ResponseParameters": {
-       "method.response.header.Access-Control-Allow-Headers": true,
        "method.response.header.Access-Control-Allow-Origin": true,
-       "method.response.header.Access-Control-Allow-Methods": true
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Allow-Headers": true
       },
-      "StatusCode": "204"
+      "StatusCode": "200"
      }
     ],
     "ResourceId": {
@@ -429,6 +382,16 @@
     "HttpMethod": "POST",
     "Integration": {
      "IntegrationHttpMethod": "POST",
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'"
+       },
+       "StatusCode": "200"
+      }
+     ],
      "Type": "AWS_PROXY",
      "Uri": {
       "Fn::Join": [
@@ -454,6 +417,16 @@
       ]
      }
     },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Allow-Headers": true
+      },
+      "StatusCode": "200"
+     }
+    ],
     "ResourceId": {
      "Ref": "CalculatorApicalculateBBFC9F30"
     },
@@ -468,7 +441,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/01QzW7CMAx+Fu5pKHDhOGDiNg2VB0AmNcXQJFXtDFVV3n1KKGOn78eO7S9LvViXeixn8ODC1PeipbMejwLmruDBp5HZJt2Taw7Qg0XBXu0u7k9ERWD1WPkWk5/x4FsyQ27LLCpenYAZhfUmgeKV3gZzR9kCo2rBnmvQ4+7i9sEZIe/yY+wtMZN3UUFHDQg+YNBjhSybjvK6N90Y44MT9Yld6weLTpL7Tx0Fmnzjk1TIPvQG8wVfKFdfp+LEXtVpSeYxvu0cIw0i16Se7yBdkKjKAtruCrqcfUxfOk/4TFh0g1y9m1oOWbwCR+V8jfrG859lqRdrvZrdmKjogxOyqKsn/gKRos8bsQEAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/01QTW/CMAz9LdzTUODCccDEbRoqPwCZ1BRDk1S1M1RV+e9TUhg7vQ+92H5Z6sW61GM5gwcXpr4XLZ31eBQwdwUPPo3MNumeXHOAHiwK9mp3cX8iKgKrx8q3mPyMB9+SGXIss6h4dQJmFNabBIpXehvMHWULjKoFe65Bj7uL2wdnhLzLj7G3xEzeRQUdNSD4gEGPFbJsOsrr3nRjjA9O1Cd2rR8sOknuP3UUaPKNE6mQfegN5gte4jlz4l8oV18na2IxvnO5RhpErkmJ7yBdkKjKAtruCrqcfTy/dJ5walh0g1y9e0YOWbwKR+V8jfrG859lqRdrvZrdmKjogxOyqKsJfwEl/RHosQEAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "CalculatorStack/CDKMetadata/Default"
@@ -501,6 +474,36 @@
       "/"
      ]
     ]
+   }
+  },
+  "CalculatorApiEndpoint": {
+   "Description": "API Gateway endpoint URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "CalculatorApiDD909B8B"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "CalculatorApiDeploymentStageprodD98406F9"
+      },
+      "/"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "CalculatorApiEndpoint"
    }
   }
  },

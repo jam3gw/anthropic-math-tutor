@@ -194,3 +194,5 @@ cdk.context.json
 
 # OS
 .DS_Store
+
+cdk.out/
