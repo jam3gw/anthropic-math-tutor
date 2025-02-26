@@ -33,16 +33,15 @@ def lambda_handler(event, context):
         # Parse the incoming event
         try:
             body = json.loads(event.get('body', '{}'))
-            operation = body.get('operation')
-            numbers = body.get('numbers', [])
+            expression = body.get('expression')
             
-            if not operation or not numbers:
+            if not expression:
                 return build_response(400, {
-                    'error': 'Missing required parameters. Please provide operation and numbers.'
+                    'error': 'Missing required parameter. Please provide a math expression.'
                 })
 
             # Create the message for Claude
-            prompt = f"Please explain this calculation: {' '.join(map(str, numbers))} {operation}"
+            prompt = f"Please explain this mathematical expression: {expression}. Break down the calculation step by step and provide the final result."
             
             # Get response from Claude
             print(f"Sending request to Anthropic API with key prefix: {key_prefix}...")
