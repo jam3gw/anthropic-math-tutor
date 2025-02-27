@@ -1,7 +1,6 @@
 import json
 import boto3
 import os
-import requests
 from anthropic import Anthropic
 
 def lambda_handler(event, context):
@@ -10,27 +9,12 @@ def lambda_handler(event, context):
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'OPTIONS,POST',
-        'Access-Control-Allow-Headers': 'Content-Type,Authorization'
+        'Access-Control-Allow-Headers': 'Content-Type'
     }
     
     # Handle preflight OPTIONS request
     if event.get('httpMethod') == 'OPTIONS':
         return build_response(200, {})
-    
-    # Get authorization token from headers
-    auth_header = event.get('headers', {}).get('Authorization', '')
-    
-    # Check if token exists and has the correct format
-    if not auth_header.startswith('Bearer '):
-        return build_response(401, {'error': 'Authorization token is missing or invalid'})
-    
-    # Extract the token
-    token = auth_header.split(' ')[1]
-    
-    # Verify the Google token
-    token_verification = verify_google_token(token)
-    if not token_verification['valid']:
-        return build_response(401, {'error': token_verification['error']})
     
     # Get the parameter name from environment variables
     parameter_name = os.environ['PARAMETER_NAME']
@@ -151,35 +135,6 @@ def lambda_handler(event, context):
         traceback.print_exc()
         return build_response(500, {'error': f'Internal server error: {str(e)}'})
 
-def verify_google_token(token):
-    """Verify a Google ID token."""
-    try:
-        # Google's token info endpoint
-        response = requests.get(f'https://oauth2.googleapis.com/tokeninfo?id_token={token}')
-        
-        if response.status_code != 200:
-            return {
-                'valid': False,
-                'error': 'Invalid token'
-            }
-        
-        token_info = response.json()
-        
-        # You can add additional verification here if needed
-        # For example, check specific audience (aud) or issuer (iss)
-        
-        return {
-            'valid': True,
-            'user_id': token_info.get('sub'),
-            'email': token_info.get('email')
-        }
-    except Exception as e:
-        print(f"Token verification error: {str(e)}")
-        return {
-            'valid': False,
-            'error': f'Token verification failed: {str(e)}'
-        }
-
 def build_response(status_code, body):
     """Helper function to build CORS-compliant responses."""
     return {
@@ -188,7 +143,7 @@ def build_response(status_code, body):
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'OPTIONS,POST',
-            'Access-Control-Allow-Headers': 'Content-Type,Authorization'
+            'Access-Control-Allow-Headers': 'Content-Type'
         },
         'body': json.dumps(body)
     }
