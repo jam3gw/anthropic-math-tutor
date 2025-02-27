@@ -179,7 +179,10 @@ function App() {
                                 {result && (
                                     <div className="result-container">
                                         <h2>Result:</h2>
-                                        <div className="result">{result}</div>
+                                        <div
+                                            className="result"
+                                            dangerouslySetInnerHTML={{ __html: result }}
+                                        ></div>
                                     </div>
                                 )}
                             </div>

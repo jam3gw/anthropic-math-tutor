@@ -69,17 +69,31 @@ def lambda_handler(event, context):
                 })
 
             # Create the message for Claude
-            prompt = f"Please explain this mathematical expression: {expression}. Break down the calculation step by step and provide the final result."
+            prompt = f"""You are Jake's Calculator Buddy, a friendly and patient math tutor for students.
+            
+            A student has asked you to solve this math expression: {expression}
+            
+            Please:
+            1. Solve the expression step-by-step using basic arithmetic rules
+            2. Explain each step in simple, easy-to-understand language as if talking to a student
+            3. Use a friendly, encouraging tone
+            4. Avoid complex mathematical terminology unless absolutely necessary
+            5. If there's a mistake or the expression is invalid, kindly explain what's wrong and how to fix it
+            6. Include a simple real-world example that relates to this math concept if possible
+            
+            Your goal is to help the student not just get the answer, but understand the math concepts behind it.
+            """
             
             # Get response from Claude
             print(f"Sending request to Anthropic API with key prefix: {key_prefix}...")
             message = client.messages.create(
-                model="claude-3-opus-20240229",
-                max_tokens=300,
-                messages=[{
-                    "role": "user",
-                    "content": prompt
-                }]
+                model="claude-3-haiku-20240307",
+                max_tokens=1000,
+                temperature=0.5,
+                system="You are Jake's Calculator Buddy, a helpful and friendly math tutor that explains math concepts in simple terms. Format your response with HTML tags for better readability: use <h3> for section titles, <p> for paragraphs, <ol> and <li> for numbered steps, <strong> for emphasis, and <hr> for section dividers.",
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
             )
 
             # Properly extract the content from the response
@@ -123,7 +137,8 @@ def lambda_handler(event, context):
 
             return build_response(200, {
                 'explanation': explanation,
-                'success': True
+                'success': True,
+                'formatted': True  # Flag to indicate the response contains HTML formatting
             })
             
         except json.JSONDecodeError:
