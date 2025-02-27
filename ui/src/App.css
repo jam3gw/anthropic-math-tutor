@@ -22,12 +22,13 @@
 
 .input-group {
     display: flex;
+    flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
 }
 
 .expression-input {
-    flex-grow: 1;
+    width: 100%;
     padding: 12px 15px;
     font-size: 16px;
     border: 1px solid #ddd;
@@ -51,7 +52,9 @@
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.3s;
-    white-space: nowrap;
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
 }
 
 .calculate-button:hover {
@@ -77,6 +80,13 @@
     margin-top: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: left;
+}
+
+.result {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 .result h3 {
@@ -120,6 +130,9 @@
     background-color: #f0f0f0;
     padding: 2px 5px;
     border-radius: 3px;
+    word-break: break-all;
+    display: inline-block;
+    max-width: 100%;
 }
 
 .App-footer {
