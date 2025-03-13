@@ -18,7 +18,7 @@ export class CalculatorStack extends cdk.Stack {
         // Create SSM Parameter
         const anthropicApiParam = new ssm.StringParameter(this, 'AnthropicApiParameter', {
             parameterName: '/calculator/anthropic-api-key',
-            stringValue: process.env.ANTHROPIC_API_KEY ?? (() => { throw new Error('ANTHROPIC_API_KEY not set in environment') })(),
+            stringValue: process.env.CALCULATOR_ANTHROPIC_API_KEY ?? (() => { throw new Error('ANTHROPIC_API_KEY not set in environment') })(),
             description: 'API Key for Anthropic Claude API',
             tier: ssm.ParameterTier.STANDARD,
         });
@@ -34,6 +34,13 @@ export class CalculatorStack extends cdk.Stack {
             environment: {
                 PARAMETER_NAME: anthropicApiParam.parameterName,
             },
+            bundling: {
+                assetExcludes: [
+                    'venv',
+                    '__pycache__',
+                    '.pytest_cache'
+                ]
+            }
         });
 
         // Grant Lambda permission to read the parameter
