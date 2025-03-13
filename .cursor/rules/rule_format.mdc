@@ -1,0 +1,61 @@
+# Rule Format Guidelines
+
+## Rule File Format
+
+All rule files in this project must:
+
+1. Use the `.mdc` file extension (Markdown with Code)
+2. Be placed in the `.cursor/rules` directory
+3. Follow the format guidelines outlined below
+
+## Rule Structure
+
+Each rule file should have:
+
+- A clear title as the main heading (H1)
+- A brief description of the rule's purpose
+- Detailed specifications using appropriate Markdown formatting
+- Code examples where applicable
+
+## Example Rule Format
+
+```markdown
+# Rule Title
+
+Brief description of what this rule enforces.
+
+## Specifications
+
+- Specification 1
+- Specification 2
+- Specification 3
+
+## Examples
+
+Good example:
+```code
+// Good code example
+```
+
+Bad example:
+```code
+// Bad code example
+```
+```
+
+## Implementation
+
+The `.cursor/rules` directory is the designated location for all project rules. This ensures:
+
+1. Consistent organization of rule files
+2. Easy discovery of rules by team members
+3. Proper integration with Cursor IDE features
+
+## Enforcement
+
+When creating new rules:
+
+1. Save the file with the `.mdc` extension
+2. Place it in the `.cursor/rules` directory
+3. Follow the structure outlined above
+4. Reference existing rules for consistency 

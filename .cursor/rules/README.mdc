@@ -1,0 +1,60 @@
+# Cursor Rules Directory
+
+This directory contains project-specific rules and guidelines for the Calculator Buddy application. These rules are designed to ensure consistency, quality, and best practices across the codebase.
+
+## Purpose
+
+The `.cursor/rules` directory serves as a central location for all project rules, making them:
+- Easy to discover
+- Simple to reference
+- Consistent in format
+- Accessible to all team members
+
+## Rule Format
+
+All rules in this directory follow a standardized format:
+- Files use the `.mdc` extension (Markdown with Code)
+- Each rule has a clear title and description
+- Rules include specifications, implementation details, and examples
+- Code snippets are included where applicable
+
+## Available Rules
+
+1. [Rule Format Guidelines](rule_format.mdc) - Guidelines for creating and formatting rule files
+2. [Math Validation Rules](math_validation.mdc) - Requirements for validating mathematical expressions
+3. [API Key Handling Rules](api_key_handling.mdc) - Guidelines for securely handling API keys
+4. [Testing Requirements Rules](testing_requirements.mdc) - Requirements for testing before deployment
+5. [Test Execution Rules](test_execution.mdc) - Requirements for executing test suites without shell scripts
+6. [Git Commit Practices](git_commit_practices.mdc) - Best practices for incremental commits, message formatting, and pre-commit checks
+
+## How to Use These Rules
+
+1. **Reference during development**: Consult these rules when implementing new features or making changes
+2. **Code reviews**: Use these rules as a checklist during code reviews
+3. **Onboarding**: Share with new team members to establish expectations
+4. **Continuous improvement**: Update rules as the project evolves and new best practices emerge
+
+## Creating New Rules
+
+To create a new rule:
+
+1. Create a new file in the `.cursor/rules` directory with the `.mdc` extension
+2. Follow the format outlined in [Rule Format Guidelines](rule_format.mdc)
+3. Include clear specifications, implementation details, and examples
+4. Reference existing code where possible
+
+## Integration with Cursor IDE
+
+These rules are designed to be compatible with Cursor IDE features, allowing for:
+- Easy navigation between rules
+- Syntax highlighting for code examples
+- Potential future integration with code analysis tools
+
+## Enforcement
+
+While these rules are not automatically enforced by tools, they serve as guidelines for:
+- Manual code reviews
+- Team discussions
+- Quality assurance processes
+
+Team members are expected to follow these rules and help maintain the quality and consistency of the codebase. 

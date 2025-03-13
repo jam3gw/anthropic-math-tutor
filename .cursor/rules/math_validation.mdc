@@ -1,0 +1,116 @@
+# Math Validation Rules
+
+This rule defines the requirements for validating mathematical expressions in the Calculator Buddy application.
+
+## Specifications
+
+1. All mathematical expressions must be validated before processing:
+   - Validate that the input is a mathematical problem
+   - Validate that the problem is solvable
+
+2. Validation should be performed in this order:
+   - Client-side basic validation (for immediate feedback)
+   - Server-side comprehensive validation (using Claude AI)
+   - Fallback to regex-based validation if Claude API fails
+
+3. Error messages must be:
+   - Clear and specific about the validation issue
+   - User-friendly and non-technical
+   - Visually distinct from other UI elements
+
+## Implementation Details
+
+### Claude-based Validation
+
+```python
+def validate_with_claude(client, expression):
+    """
+    Use Claude to validate if the input is a math problem and if it's solvable.
+    
+    Args:
+        client: The Anthropic client
+        expression (str): The input expression to validate
+        
+    Returns:
+        tuple: (is_valid, is_math_problem, error_message)
+    """
+    validation_prompt = f"""You are a math validation assistant. Your only job is to determine if the following input is:
+    1. A mathematical problem/expression
+    2. Solvable using standard mathematical rules
+    
+    Input: {expression}
+    
+    Respond with ONLY a JSON object with the following structure:
+    {{
+        "is_math_problem": true/false,
+        "is_solvable": true/false,
+        "error_message": "Specific error message if not solvable or not a math problem"
+    }}
+    """
+    
+    # Implementation details...
+```
+
+### Fallback Validation
+
+```python
+def basic_validation(expression):
+    """
+    Fallback basic validation using regex if Claude validation fails.
+    
+    Args:
+        expression (str): The input expression to validate
+        
+    Returns:
+        tuple: (is_valid, is_math_problem, error_message)
+    """
+    # Check for presence of mathematical operators or functions
+    math_operators = r'[\+\-\*\/\^\(\)\[\]\{\}\=\<\>\%\√]'
+    math_functions = r'\b(sin|cos|tan|log|ln|sqrt|abs|exp|pow|round|floor|ceil)\b'
+    numbers = r'\d+'
+    
+    # Implementation details...
+```
+
+## Testing Requirements
+
+1. All validation functions must have unit tests
+2. Tests must cover:
+   - Valid mathematical expressions
+   - Invalid (non-math) inputs
+   - Unsolvable math expressions
+   - Edge cases (division by zero, unbalanced parentheses, etc.)
+
+3. Manual testing script must be used before deployment:
+   ```bash
+   cd lambda
+   ./test_claude_validation.py "2 + 2"
+   ```
+
+## Examples
+
+### Good Implementation
+
+```python
+# Validate that the input is a math problem
+if not is_math_problem(expression):
+    return build_response(400, {
+        'error': 'The input does not appear to be a math problem. Please enter a valid mathematical expression.'
+    })
+
+# Validate that the math problem is solvable
+is_valid, error_message = is_solvable(expression)
+if not is_valid:
+    return build_response(400, {
+        'error': f'The math problem appears to be invalid: {error_message}'
+    })
+```
+
+### Bad Implementation
+
+```python
+# Missing validation
+# Just process the expression without checking if it's valid
+result = process_expression(expression)
+return build_response(200, {'result': result})
+``` 

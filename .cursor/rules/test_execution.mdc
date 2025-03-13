@@ -1,0 +1,139 @@
+---
+description: q
+globs: 
+alwaysApply: false
+---
+# Test Execution Rules
+
+This rule defines the requirements for executing test suites in the Calculator Buddy application, specifically prohibiting the use of shell scripts for test execution.
+
+## Specifications
+
+1. Test suites must **never** be executed via shell scripts:
+   - Python test suites should be executed directly using Python tools
+   - JavaScript/frontend test suites should be executed directly using npm/yarn commands
+   - Any other test suites should be executed using their native runners
+
+2. Preferred test execution methods:
+   - Python tests: Use pytest, unittest, or similar Python-native test runners
+   - JavaScript tests: Use npm test commands defined in package.json
+   - Integration tests: Use the testing framework's built-in capabilities
+
+3. Test execution must be:
+   - Reproducible across different environments
+   - Configurable via command-line arguments
+   - Capable of generating consistent reports
+
+## Implementation Details
+
+### Python Test Execution
+
+```python
+# Execute tests directly with pytest
+# GOOD: Use pytest directly
+import pytest
+
+if __name__ == "__main__":
+    # Run tests with specific options
+    pytest.main(["-v", "test_module.py", "--cov=app"])
+```
+
+### JavaScript Test Execution
+
+```json
+// In package.json
+{
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  }
+}
+```
+
+```bash
+# GOOD: Execute tests using npm commands
+npm test
+npm run test:coverage
+```
+
+## Rationale
+
+Shell scripts for test execution are prohibited because:
+
+1. **Environment Inconsistency**: Shell scripts behave differently across operating systems (Windows, macOS, Linux)
+2. **Hidden Dependencies**: Shell scripts often contain implicit dependencies that aren't tracked
+3. **Maintenance Burden**: Shell scripts require separate maintenance from the actual test code
+4. **Debugging Difficulty**: Errors in shell scripts are harder to debug than errors in the native test framework
+5. **Integration Issues**: CI/CD systems work better with native test runners than with custom shell scripts
+
+## Examples
+
+### Good Implementation
+
+```python
+# Python: Using pytest directly
+# test_runner.py
+import pytest
+import sys
+
+if __name__ == "__main__":
+    # Get command line arguments
+    args = sys.argv[1:] or ["-v"]
+    # Add default test directory if not specified
+    if not any(arg.endswith(".py") for arg in args):
+        args.append("tests/")
+    # Run tests
+    sys.exit(pytest.main(args))
+```
+
+```javascript
+// JavaScript: Using package.json scripts
+// package.json
+{
+  "scripts": {
+    "test": "jest",
+    "test:ci": "jest --ci --coverage",
+    "test:e2e": "cypress run"
+  }
+}
+```
+
+### Bad Implementation
+
+```bash
+# BAD: Shell script to run Python tests
+#!/bin/bash
+
+# Set environment variables
+export PYTHONPATH=.
+
+# Run tests
+python -m pytest tests/ -v
+
+# Check exit code
+if [ $? -eq 0 ]; then
+    echo "Tests passed!"
+else
+    echo "Tests failed!"
+    exit 1
+fi
+```
+
+## Migration Guide
+
+If you currently have shell scripts for test execution:
+
+1. Identify all test-related shell scripts in the project
+2. Extract the core test commands from these scripts
+3. Implement direct test execution using the native test runner
+4. Update documentation and CI/CD configurations to use the new approach
+5. Remove the shell scripts
+
+## Exceptions
+
+In rare cases, complex test orchestration may require scripting. If this is absolutely necessary:
+
+1. Document the reason for the exception
+2. Use a cross-platform solution (e.g., Python script instead of shell script)
+3. Keep the orchestration logic minimal and focused on coordination only 

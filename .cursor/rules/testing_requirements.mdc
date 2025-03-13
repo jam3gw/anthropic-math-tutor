@@ -1,0 +1,138 @@
+# Testing Requirements Rules
+
+This rule defines the testing requirements for the Calculator Buddy application, with specific focus on validating functionality before deployment.
+
+## Specifications
+
+1. All new features must have:
+   - Unit tests for individual functions
+   - Integration tests for API endpoints
+   - UI tests for frontend components
+
+2. Test coverage requirements:
+   - Backend: Minimum 80% code coverage
+   - Frontend: Minimum 70% code coverage
+   - Critical paths: 100% coverage
+
+3. Testing must be performed:
+   - Before each pull request
+   - Before each deployment
+   - After major dependency updates
+
+## Implementation Details
+
+### Backend Testing
+
+```python
+import unittest
+from unittest.mock import patch, MagicMock
+from lambda_function import validate_with_claude, basic_validation
+
+class TestMathValidation(unittest.TestCase):
+    
+    def test_basic_validation_valid_math(self):
+        """Test basic validation with valid math expressions"""
+        test_cases = [
+            "2 + 2",
+            "5 * (3 + 2)",
+            "10 / 2"
+        ]
+        
+        for expr in test_cases:
+            is_valid, is_math, error_msg = basic_validation(expr)
+            self.assertTrue(is_math, f"Expression '{expr}' should be identified as math")
+            self.assertTrue(is_valid, f"Expression '{expr}' should be valid")
+```
+
+### Frontend Testing
+
+```javascript
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import App from './App';
+
+// Mock fetch API
+global.fetch = jest.fn();
+
+describe('Calculator App', () => {
+    beforeEach(() => {
+        fetch.mockClear();
+    });
+
+    test('renders calculator interface', () => {
+        render(<App />);
+        
+        // Check if main elements are rendered
+        expect(screen.getByText(/Jake's Calculator Buddy/i)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/Enter a mathematical expression/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Calculate/i })).toBeInTheDocument();
+    });
+```
+
+### Manual Testing
+
+```bash
+#!/bin/bash
+
+# Set colors for output
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${YELLOW}Running tests for Calculator Buddy validation functionality...${NC}"
+echo
+
+# Check if Python is installed
+if ! command -v python3 &> /dev/null; then
+    echo -e "${RED}Python 3 is not installed. Please install Python 3 to run the backend tests.${NC}"
+    exit 1
+fi
+```
+
+## Testing Tools
+
+1. Backend testing:
+   - `pytest` for Python unit tests
+   - `unittest.mock` for mocking external dependencies
+   - `coverage` for measuring code coverage
+
+2. Frontend testing:
+   - Jest for JavaScript unit tests
+   - React Testing Library for component tests
+   - Mock Service Worker for API mocking
+
+3. Manual testing:
+   - Custom scripts for testing with real API calls
+   - Shell scripts for running all tests before deployment
+
+## Examples
+
+### Good Implementation
+
+```bash
+# Run all tests before deployment
+./run_tests.sh
+
+# If tests pass, proceed with deployment
+if [ $? -eq 0 ]; then
+    echo "All tests passed! Deploying..."
+    ./deploy.sh
+else
+    echo "Tests failed. Fix issues before deploying."
+    exit 1
+fi
+```
+
+### Bad Implementation
+
+```bash
+# Deploy without testing
+./deploy.sh
+
+# Only run tests if there's time
+if [ "$RUN_TESTS" = "true" ]; then
+    ./run_tests.sh
+fi
+``` 

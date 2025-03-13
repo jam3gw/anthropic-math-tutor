@@ -1,0 +1,155 @@
+# Git Commit Practices
+
+## Description
+This rule defines best practices for making git commits in the Calculator Buddy project, focusing on incremental commits, logical grouping of changes, writing effective commit messages, and pre-commit checks.
+
+## Specifications
+
+### Commit Frequency and Size
+- Make small, incremental commits rather than large, monolithic ones
+- Each commit should represent a single logical change
+- Aim for commits that can be understood in under 5 minutes of review
+- If a change requires more than 300-500 lines of code, consider breaking it into smaller commits
+
+### Logical Grouping of Changes
+- Group related changes in the same commit
+- Separate unrelated changes into different commits
+- Follow this order of operations for complex changes:
+  1. Refactoring (changing structure without changing behavior)
+  2. Feature additions
+  3. Bug fixes
+  4. Documentation updates
+
+### Commit Message Structure
+- Use the imperative mood in the subject line (e.g., "Add" not "Added")
+- Structure commit messages as follows:
+  ```
+  <type>(<scope>): <subject>
+
+  <body>
+
+  <footer>
+  ```
+- Types include: feat, fix, docs, style, refactor, test, chore
+- Keep the subject line under 50 characters
+- Wrap the body at 72 characters
+- Use the body to explain what and why, not how
+- Reference issues and pull requests in the footer
+
+### Pre-Commit Checks
+- Run all tests before committing: `npm test`
+- Ensure code passes linting: `npm run lint`
+- Verify the application builds successfully: `npm run build`
+- Review your changes with `git diff --staged`
+- Check for unintended changes or debugging code
+- Ensure no sensitive information is being committed (API keys, credentials)
+
+### Commit Workflow
+1. Create a feature branch for your work
+2. Make small, focused commits as you work
+3. Regularly pull and rebase from the main branch
+4. Before finalizing, consider using `git rebase -i` to clean up commit history
+5. Push your changes and create a pull request
+
+## Implementation
+
+### Example of Good Commit Messages
+```
+feat(validation): add Claude AI validation for math expressions
+
+Implement validation using Claude AI to determine if an input is a valid 
+mathematical expression before attempting to solve it.
+
+Closes #123
+```
+
+```
+fix(ui): correct error message display on mobile devices
+
+Error messages were overflowing on small screens. Adjusted CSS to 
+ensure proper wrapping and visibility on all device sizes.
+
+Fixes #456
+```
+
+### Example of Bad Commit Messages
+```
+fixed stuff
+```
+
+```
+WIP - don't merge yet
+```
+
+```
+Added validation and fixed bugs and updated styles and documentation
+```
+
+### Git Hooks Setup
+Consider setting up git hooks to automate pre-commit checks:
+
+```bash
+#!/bin/sh
+# Pre-commit hook to run tests and linting
+
+# Run tests
+npm test
+if [ $? -ne 0 ]; then
+  echo "Tests failed. Commit aborted."
+  exit 1
+fi
+
+# Run linting
+npm run lint
+if [ $? -ne 0 ]; then
+  echo "Linting failed. Commit aborted."
+  exit 1
+fi
+
+# Check for console.log statements
+if grep -r "console.log" --include="*.js" --include="*.jsx" src/; then
+  echo "Warning: console.log statements found. Consider removing them before committing."
+  exit 1
+fi
+
+exit 0
+```
+
+## Testing Requirements
+- Verify that commits follow the specified format
+- Ensure that each commit passes all tests and linting
+- Check that commits are properly sized and logically grouped
+
+## Examples
+
+### Good Implementation
+```bash
+# Good commit workflow
+git checkout -b feature/add-validation
+# Make changes to validation logic
+git add lambda/validate.js
+git commit -m "feat(validation): implement basic regex validation"
+# Add tests for the validation
+git add lambda/test_validate.js
+git commit -m "test(validation): add unit tests for regex validation"
+# Fix a bug discovered during testing
+git add lambda/validate.js
+git commit -m "fix(validation): handle edge case with negative numbers"
+# Update documentation
+git add README.md
+git commit -m "docs: update README with validation information"
+```
+
+### Bad Implementation
+```bash
+# Bad commit workflow
+# Make many unrelated changes
+git add .
+git commit -m "lots of changes"
+# Or commit work in progress
+git add .
+git commit -m "WIP"
+# Or commit with uninformative message
+git add .
+git commit -m "fixed"
+``` 

@@ -1,0 +1,119 @@
+# API Key Handling Rules
+
+This rule defines the requirements for handling API keys in the Calculator Buddy application, with specific focus on the Anthropic API key.
+
+## Specifications
+
+1. API keys must never be:
+   - Hardcoded in source code
+   - Committed to version control
+   - Logged in plaintext
+
+2. API keys should be stored in:
+   - Environment variables for local development
+   - AWS SSM Parameter Store for production
+   - Secure environment variables for CI/CD pipelines
+
+3. API key validation must:
+   - Check for proper format (e.g., `sk-ant-` prefix for Anthropic)
+   - Provide helpful error messages for invalid keys
+   - Include fallback mechanisms when API calls fail
+
+## Implementation Details
+
+### Environment Variable Setup
+
+```bash
+# Local development
+export ANTHROPIC_API_KEY=sk-ant-your-api-key
+
+# Testing with wrapper script
+./run_test_with_key.sh "sk-ant-your-api-key" "2 + 2"
+```
+
+### API Key Validation
+
+```python
+def validate_api_key(api_key):
+    """Validate the API key format and print helpful information."""
+    if not api_key:
+        return False, "No API key provided"
+    
+    if not api_key.startswith("sk-ant-"):
+        return False, f"API key doesn't start with 'sk-ant-'. Got: {api_key[:7]}..."
+    
+    if len(api_key) < 20:  # Arbitrary minimum length
+        return False, f"API key seems too short ({len(api_key)} chars)"
+    
+    # Key looks valid in format
+    return True, f"API key format looks valid: {api_key[:7]}...{api_key[-4:]}"
+```
+
+### AWS SSM Parameter Store
+
+```python
+# Get the parameter name from environment variables
+parameter_name = os.environ['PARAMETER_NAME']
+
+session = boto3.session.Session()
+ssm_client = session.client('ssm')
+
+try:
+    response = ssm_client.get_parameter(
+        Name=parameter_name,
+        WithDecryption=True
+    )
+    
+    api_key = response['Parameter']['Value']
+    
+    # Log key details safely for debugging
+    key_length = len(api_key) if api_key else 0
+    key_prefix = api_key[:4] if key_length >= 4 else api_key
+    key_suffix = api_key[-4:] if key_length >= 8 else ""
+    print(f"API Key retrieved - Length: {key_length}, Prefix: {key_prefix}, Suffix: {key_suffix}")
+```
+
+## Testing Requirements
+
+1. API key validation must be tested with:
+   - Valid keys
+   - Invalid keys (wrong format, too short)
+   - Missing keys
+
+2. Tests must not use real API keys:
+   - Use mock keys for unit tests
+   - Use environment variables for integration tests
+
+3. Debugging tools must be available:
+   ```bash
+   # Check if API key is set correctly
+   ./check_api_key.py
+   ```
+
+## Examples
+
+### Good Implementation
+
+```python
+# Get API key from environment or parameter store
+api_key = os.environ.get('ANTHROPIC_API_KEY')
+if not api_key:
+    # Fallback to parameter store
+    api_key = get_api_key_from_parameter_store()
+
+# Validate key format
+is_valid_key, key_message = validate_api_key(api_key)
+if not is_valid_key:
+    log_error(f"Invalid API key: {key_message}")
+    return fallback_response()
+```
+
+### Bad Implementation
+
+```python
+# Hardcoded API key (NEVER DO THIS)
+api_key = "sk-ant-1234567890abcdefghijklmn"
+
+# No validation
+client = Anthropic(api_key=api_key)
+``` 
