@@ -1,0 +1,111 @@
+@startuml Calculator Buddy System Architecture
+
+' Styling
+skinparam backgroundColor white
+skinparam handwritten false
+skinparam defaultTextAlignment center
+skinparam componentStyle rectangle
+skinparam arrowColor #666666
+skinparam linetype ortho
+
+skinparam component {
+    BorderColor #cccccc
+    BackgroundColor white
+    ArrowColor #666666
+    FontSize 14
+}
+
+skinparam note {
+    BackgroundColor #FFFFCC
+    BorderColor #999999
+}
+
+title Calculator Buddy System Architecture
+
+' Layout components in a more structured way
+package "Client Side" {
+    [User] as user #E3F2FD
+    [Frontend] as frontend #E8F5E9
+}
+
+package "AWS Cloud" {
+    [API Gateway] as api_gateway #FFF3E0
+    [Lambda Function] as lambda #FFEBEE
+    [SSM Parameter\nStore] as ssm #F3E5F5
+}
+
+package "Claude AI Services" {
+    [Claude AI\nValidation] as claude_validation #E0F7FA
+    [Claude AI\nSolving] as claude_solving #E1F5FE
+    [Claude AI\nExplanation] as claude_explanation #E8F5E9
+}
+
+' Connections with better layout
+user -right-> frontend : 1. Input Expression
+frontend -right-> api_gateway : 2. API Request
+api_gateway -right-> lambda : 3. Trigger
+lambda -up-> ssm : 4. Get API Key
+ssm -right-> claude_validation : 5. API Key
+lambda -right-> claude_validation : 6. Process Expression
+claude_validation -right-> claude_solving : 7. If Valid
+claude_solving -down-> claude_explanation : 8. Generate Steps
+claude_explanation -up-> claude_solving : 9. Return Steps
+claude_solving -left-> lambda : 10. Result
+lambda -left-> api_gateway : 11. Return
+api_gateway -left-> frontend : 12. Response
+frontend -left-> user : 13. Display Result
+
+' Component descriptions
+note bottom of user
+  End user who enters mathematical 
+  expressions into the calculator
+end note
+
+note bottom of frontend
+  React-based UI that handles user input
+  and displays results
+end note
+
+note bottom of api_gateway
+  AWS API Gateway that routes requests
+  to the Lambda function
+end note
+
+note bottom of lambda
+  AWS Lambda function that processes
+  the mathematical expression
+end note
+
+note bottom of ssm
+  AWS SSM Parameter Store that
+  securely stores the Claude API key
+end note
+
+note bottom of claude_validation
+  Validates if the input is a valid math 
+  problem and if it's solvable
+end note
+
+note bottom of claude_solving
+  Solves the math problem and 
+  provides a detailed explanation
+end note
+
+note bottom of claude_explanation
+  Generates step-by-step explanations 
+  of the solution process
+end note
+
+' Legend
+legend right
+  **Calculator Buddy System Flow**
+  This diagram shows how Calculator Buddy processes 
+  mathematical expressions using multiple Claude AI interactions.
+  
+  The system uses three distinct Claude AI services:
+  - Validation: Checks if input is a valid math problem
+  - Solving: Computes the result of the expression
+  - Explanation: Provides detailed step-by-step solution
+endlegend
+
+@enduml 

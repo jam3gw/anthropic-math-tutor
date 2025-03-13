@@ -1,0 +1,102 @@
+@startuml Calculator Buddy Claude AI Interactions
+
+' Styling
+skinparam backgroundColor white
+skinparam handwritten false
+skinparam defaultTextAlignment center
+skinparam componentStyle rectangle
+skinparam arrowColor #666666
+skinparam linetype polyline
+skinparam shadowing false
+
+skinparam component {
+    BorderColor #cccccc
+    BackgroundColor white
+    ArrowColor #666666
+    FontSize 14
+}
+
+skinparam note {
+    BackgroundColor #FFFFCC
+    BorderColor #999999
+}
+
+skinparam sequence {
+    ArrowColor #666666
+    LifeLineBorderColor #999999
+    LifeLineBackgroundColor #DDDDDD
+    ParticipantBorderColor #999999
+    ParticipantBackgroundColor #FFFFFF
+    ParticipantFontSize 14
+    ActorBorderColor #999999
+    ActorBackgroundColor #FFFFFF
+    ActorFontSize 14
+}
+
+title Calculator Buddy - Claude AI Interactions
+
+' Sequence diagram showing the interactions with Claude AI
+actor User
+participant "Frontend" as Frontend
+participant "Lambda\nFunction" as Lambda
+participant "SSM Parameter\nStore" as SSM
+participant "Claude AI\nValidation" as ClaudeValidation #E0F7FA
+participant "Claude AI\nSolving" as ClaudeSolving #E1F5FE
+participant "Claude AI\nExplanation" as ClaudeExplanation #E8F5E9
+
+User -> Frontend : Enter math expression
+Frontend -> Lambda : Send expression
+Lambda -> SSM : Request API key
+SSM --> Lambda : Return API key
+
+Lambda -> ClaudeValidation : Validate expression
+note right of ClaudeValidation
+  Prompt: "Is this a valid math problem?
+  Can it be solved? Expression: {expression}"
+end note
+
+alt Valid Math Problem
+    ClaudeValidation --> Lambda : Confirm valid
+    Lambda -> ClaudeSolving : Solve expression
+    note right of ClaudeSolving
+      Prompt: "Solve this math problem
+      and provide the result: {expression}"
+    end note
+    
+    ClaudeSolving -> ClaudeExplanation : Request explanation
+    note right of ClaudeExplanation
+      Prompt: "Provide a detailed step-by-step
+      explanation of how to solve: {expression}"
+    end note
+    
+    ClaudeExplanation --> ClaudeSolving : Return explanation
+    ClaudeSolving --> Lambda : Return result with explanation
+    Lambda --> Frontend : Return complete solution
+    Frontend --> User : Display result and explanation
+else Invalid Math Problem
+    ClaudeValidation --> Lambda : Report invalid
+    Lambda --> Frontend : Return validation error
+    Frontend --> User : Display error message
+end
+
+' Legend
+legend right
+  **Multiple Claude AI Interactions**
+  
+  The Calculator Buddy application leverages Claude AI
+  for three distinct purposes:
+  
+  1. **Validation** - Determines if the input is a valid
+     mathematical expression that can be solved
+  
+  2. **Solving** - Computes the result of the valid
+     mathematical expression
+  
+  3. **Explanation** - Generates a detailed step-by-step
+     explanation of how the problem is solved
+  
+  Each interaction uses a specialized prompt to get
+  the most accurate and helpful response from Claude.
+endlegend
+
+@enduml 

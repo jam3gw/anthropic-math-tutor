@@ -1,0 +1,69 @@
+@startuml Calculator Buddy System Architecture
+
+skinparam backgroundColor white
+skinparam handwritten false
+skinparam defaultTextAlignment center
+skinparam componentStyle rectangle
+skinparam arrowColor #999999
+
+!define AWSCOLOR #FF9900
+!define CLAUDECOLOR #7B68EE
+!define USERCOLOR #4285F4
+!define FRONTENDCOLOR #34A853
+
+skinparam component {
+    BorderColor #cccccc
+    BackgroundColor white
+    ArrowColor #999999
+    FontSize 14
+}
+
+title Calculator Buddy System Architecture
+
+' Components
+[User] as user #E3F2FD
+[Frontend] as frontend #E8F5E9
+[API Gateway] as api_gateway #FFF3E0
+[Lambda Function] as lambda #FFEBEE
+[SSM Parameter\nStore] as ssm #F3E5F5
+[Claude AI\nValidation] as claude_validation #E0F7FA
+[Claude AI\nSolving] as claude_solving #E1F5FE
+[Claude AI\nExplanation] as claude_explanation #E8F5E9
+
+' Connections
+user -right-> frontend : Input Expression
+frontend -right-> api_gateway : API Request
+api_gateway -right-> lambda : Trigger
+lambda -up-> ssm : Get API Key
+ssm -right-> claude_validation : API Key
+lambda -right-> claude_validation : Process Expression
+claude_validation -right-> claude_solving : If Valid
+claude_solving -down-> claude_explanation : Generate Steps
+claude_explanation -up-> claude_solving
+claude_solving -left-> lambda : Result
+lambda -left-> api_gateway
+api_gateway -left-> frontend
+frontend -left-> user : Response
+
+' Notes
+note bottom of user
+  End user who enters mathematical 
+  expressions into the calculator
+end note
+
+note bottom of claude_validation
+  Validates if the input is a valid math 
+  problem and if it's solvable
+end note
+
+note bottom of claude_solving
+  Solves the math problem and 
+  provides a detailed explanation
+end note
+
+note bottom of claude_explanation
+  Generates step-by-step explanations 
+  of the solution process
+end note
+
+@enduml 
